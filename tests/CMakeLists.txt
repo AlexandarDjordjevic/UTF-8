@@ -15,6 +15,13 @@ include_directories(${GTEST_INCLUDE_DIRS})
 add_executable(${this} ${Src})
 
 # Link runTests with what we want to test and the GTest and pthread library
-target_link_libraries(${this} ${GTEST_LIBRARIES} pthread)
+target_link_libraries(${this} 
+                        ${GTEST_BOTH_LIBRARIES}
+                        pthread
+                        utf8
+                     )
 
-
+add_test(
+    NAME ${This}
+    COMMAND ${This}
+)
