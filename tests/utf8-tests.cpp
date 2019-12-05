@@ -120,19 +120,33 @@ TEST(UTF8_Decode, UnicodeCodePoints_10000to10FFFF){
     ASSERT_EQ(expected, result);
 }
 
-// TEST(UTF8_Encode, InvalidUnicodeCodePoints_10FFFFto1FFFFF){
-//     UTF8::UTF8 utf8;
-//     const std::vector<  UTF8::UnicodeCodePoint > expected{ 0xF0, 0xA0, 0x80, 0xBE, 0xEF, 0xBF, 0xBD, 0xF0, 0xA3, 0x8E, 0xB4 };
-//     const auto result = utf8.Encode({0x2003E, 0x110000, 0x233B4});
-//     ASSERT_EQ(expected, result);
-// }
+TEST(UTF8_Decode, InvalidUnicodeCodePoints_10FFFFto1FFFFF){
+    UTF8::UTF8 utf8;
+    const std::vector<  UTF8::UnicodeCodePoint > expected{0x2003E, 0xFFFD, 0x233B4};
+    const auto result = utf8.Decode({ 0xF0, 0xA0, 0x80, 0xBE, 0xEF, 0xBF, 0xBD, 0xF0, 0xA3, 0x8E, 0xB4 });
+    ASSERT_EQ(expected, result);
+}
 
-// TEST(UTF8_Encode, InvalidUnicodeCodePoints_Over1FFFFF){
-//     UTF8::UTF8 utf8;
-//     const std::vector<  UTF8::UnicodeCodePoint > expected{ 0xF0, 0xA0, 0x80, 0xBE, 0xEF, 0xBF, 0xBD, 0xF0, 0xA3, 0x8E, 0xB4 };
-//     const auto result = utf8.Encode({0x2003E, 0x200000, 0x233B4});
-//     ASSERT_EQ(expected, result);
-// }
+TEST(UTF8_Decode, InvalidUTFSequenceStart){
+    UTF8::UTF8 utf8;
+    const std::vector<  UTF8::UnicodeCodePoint > expected{ 0xFFFD };
+    const auto result = utf8.Decode({ 0x80 });
+    ASSERT_EQ(expected, result);
+}
+
+TEST(UTF8_Decode, InvalidUTFSequenceMissingByte){
+    UTF8::UTF8 utf8;
+    const std::vector<  UTF8::UnicodeCodePoint > expected{ 0xFFFD };
+    const auto result = utf8.Decode({ 0xF1, 0x81, 0x80 });
+    ASSERT_EQ(expected, result);
+}
+
+TEST(UTF8_Decode, InvalidUTFSequenceFirstByteValue0){
+    UTF8::UTF8 utf8;
+    const std::vector<  UTF8::UnicodeCodePoint > expected{ 0xFFFD, 0xFFFD };
+    const auto result = utf8.Decode({ 0xc0, 0x81});
+    ASSERT_EQ(expected, result);
+}
 
 // /*
 // * Since RFC 3629 (November 2003), the high and low surrogate halves used by UTF-16 (U+D800 through U+DFFF)and code 
