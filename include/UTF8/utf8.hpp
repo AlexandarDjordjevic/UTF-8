@@ -19,10 +19,10 @@ namespace UTF8
         UTF8& operator=(const UTF8&) = delete;
         UTF8& operator=(UTF8&) = delete;
 
-        std::vector< uint8_t > Encode(const std::vector< UnicodeCodePoint >& codePoints);
+        static std::vector< uint8_t > Encode(const std::vector< UnicodeCodePoint >& codePoints);
         std::vector< UnicodeCodePoint > Decode(const std::vector< uint8_t >& utf8Input); 
     private:
         struct Impl;
-        std::unique_ptr< struct Impl > pimpl;
+        std::unique_ptr< Impl > pimpl;
     };
 } // namespace UTF8

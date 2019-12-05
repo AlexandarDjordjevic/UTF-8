@@ -92,42 +92,44 @@ TEST(UTF8_Encode, InvalidUnicodeCodePoints_HightAndLowSurrogateHalves){
  *  DECODE
  * 
  */
-TEST(UTF8Decode, UnicodeCodePoints_00to7f){
+TEST(UTF8_Decode, UnicodeCodePoints_00to7f){
     UTF8::UTF8 utf8;
-    // ASSERT_EQ(utf8.Decode({0x0041, 0x007f}), (std::vector< UTF8::UnicodeCodePoint >{'A', 0x7f}));
+    const std::vector< UTF8::UnicodeCodePoint > expected{'A', 0x7f};
+    const auto result = utf8.Decode({0x0041, 0x007f});
+    ASSERT_EQ(expected, result);
 }
 
-// TEST(UTF8_Encode, UnicodeCodePoints_80to7FF){
-//     UTF8::UTF8 utf8;
-//     const std::vector< uint8_t > expected{ 0xC2, 0x80, 0xC2, 0xA1, 0xC4, 0x80, 0xCF, 0xBF, 0xD0, 0x80, 0xDF, 0xBF };
-//     const auto result = utf8.Encode({0x80, 0xA1, 0x100, 0x3ff, 0x400, 0x7ff});
-//     ASSERT_EQ(expected, result);
-// }
+TEST(UTF8_Decode, UnicodeCodePoints_80to7FF){
+    UTF8::UTF8 utf8;
+    const std::vector< UTF8::UnicodeCodePoint > expected{0x80, 0xA1, 0x100, 0x3ff, 0x400, 0x7ff };
+    const auto result = utf8.Decode({ 0xC2, 0x80, 0xC2, 0xA1, 0xC4, 0x80, 0xCF, 0xBF, 0xD0, 0x80, 0xDF, 0xBF });
+    ASSERT_EQ(expected, result);
+}
 
-// TEST(UTF8_Encode, UnicodeCodePoints_800toFFFF){
-//     UTF8::UTF8 utf8;
-//     const std::vector< uint8_t > expected{ 0xE0, 0xA0, 0x80, 0xEF, 0xBF, 0xBF };
-//     const auto result = utf8.Encode({0x800, 0xffff});
-//     ASSERT_EQ(expected, result);
-// }
+TEST(UTF8_Decode, UnicodeCodePoints_800toFFFF){
+    UTF8::UTF8 utf8;
+    const std::vector< UTF8::UnicodeCodePoint > expected{0x800, 0xffff};
+    const auto result = utf8.Decode({ 0xE0, 0xA0, 0x80, 0xEF, 0xBF, 0xBF });
+    ASSERT_EQ(expected, result);
+}
 
-// TEST(UTF8_Encode, UnicodeCodePoints_10000to10FFFF){
-//     UTF8::UTF8 utf8;
-//     const std::vector< uint8_t > expected{ 0xF0, 0xA0, 0x80, 0xBE, 0xF0, 0xA3, 0x8E, 0xB4 };
-//     const auto result = utf8.Encode({0x2003E, 0x233B4});
-//     ASSERT_EQ(expected, result);
-// }
+TEST(UTF8_Decode, UnicodeCodePoints_10000to10FFFF){
+    UTF8::UTF8 utf8;
+    const std::vector<  UTF8::UnicodeCodePoint > expected{0x2003E, 0x233B4};
+    const auto result = utf8.Decode({ 0xF0, 0xA0, 0x80, 0xBE, 0xF0, 0xA3, 0x8E, 0xB4 });
+    ASSERT_EQ(expected, result);
+}
 
 // TEST(UTF8_Encode, InvalidUnicodeCodePoints_10FFFFto1FFFFF){
 //     UTF8::UTF8 utf8;
-//     const std::vector< uint8_t > expected{ 0xF0, 0xA0, 0x80, 0xBE, 0xEF, 0xBF, 0xBD, 0xF0, 0xA3, 0x8E, 0xB4 };
+//     const std::vector<  UTF8::UnicodeCodePoint > expected{ 0xF0, 0xA0, 0x80, 0xBE, 0xEF, 0xBF, 0xBD, 0xF0, 0xA3, 0x8E, 0xB4 };
 //     const auto result = utf8.Encode({0x2003E, 0x110000, 0x233B4});
 //     ASSERT_EQ(expected, result);
 // }
 
 // TEST(UTF8_Encode, InvalidUnicodeCodePoints_Over1FFFFF){
 //     UTF8::UTF8 utf8;
-//     const std::vector< uint8_t > expected{ 0xF0, 0xA0, 0x80, 0xBE, 0xEF, 0xBF, 0xBD, 0xF0, 0xA3, 0x8E, 0xB4 };
+//     const std::vector<  UTF8::UnicodeCodePoint > expected{ 0xF0, 0xA0, 0x80, 0xBE, 0xEF, 0xBF, 0xBD, 0xF0, 0xA3, 0x8E, 0xB4 };
 //     const auto result = utf8.Encode({0x2003E, 0x200000, 0x233B4});
 //     ASSERT_EQ(expected, result);
 // }
