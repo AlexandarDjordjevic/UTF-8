@@ -20,7 +20,10 @@ namespace UTF8
         UTF8& operator=(UTF8&) = delete;
 
         static std::vector< uint8_t > Encode(const std::vector< UnicodeCodePoint >& codePoints);
-        std::vector< UnicodeCodePoint > Decode(const std::vector< uint8_t >& utf8Input); 
+        
+        std::vector< UnicodeCodePoint > Decode(const std::string& encoding); 
+        std::vector< UnicodeCodePoint > Decode(const std::vector< uint8_t >& encoding); 
+
     private:
         struct Impl;
         std::unique_ptr< Impl > pimpl;
