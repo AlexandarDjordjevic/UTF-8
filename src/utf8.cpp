@@ -89,36 +89,36 @@ namespace UTF8{
         for ( auto chunk : encoding){ 
             if(!(chunk & 0x80)){
                 output.push_back(UnicodeCodePoint(chunk));
-            }
-            else
-            {
+            }else{
                 if(pimpl->encodingPosition == 0){
-                    pimpl->utf8RepresnetationLen = 0;
-                    while((0x80 & chunk) && (pimpl->utf8RepresnetationLen < UTF8_ENCODED_CHAR_MAX_LEN)){
-                        pimpl->utf8RepresnetationLen++;
-                        chunk <<= 1;
-                    }
-                    if (pimpl->utf8RepresnetationLen == 1) {
+                    if((chunk >> 5) == 0x6){ //b1100 0000
+                        pimpl->utf8RepresnetationLen = 11;
+                        pimpl->unicodeCodePointValue = chunk & 0x1F;  
+                    }else if((chunk >> 4) == 0xE){//b1110 0000
+                        pimpl->utf8RepresnetationLen = 16;
+                        pimpl->unicodeCodePointValue = chunk & 0x0F;
+                    }else if((chunk >> 3) == 0x1E){//b1111 0000
+                        pimpl->utf8RepresnetationLen = 21;
+                        pimpl->unicodeCodePointValue = chunk & 0x07;
+                    }else{
                        output.push_back(UNICODE_REPLACEMEMENT_CHARACTER);
-                       pimpl->utf8RepresnetationLen = 0;
-                    } else {
-                        pimpl->unicodeCodePointValue = chunk >> pimpl->utf8RepresnetationLen;
-                        pimpl->encodingPosition++;                 
+                       pimpl->utf8RepresnetationLen = 0; 
                     }
+                    pimpl->encodingPosition = pimpl->utf8RepresnetationLen % 6;
                 }
                 else
                 {
                     if((chunk & 0xc0) == 0x80){
                         pimpl->unicodeCodePointValue <<= 6;
                         pimpl->unicodeCodePointValue += (chunk & 0x3f);
-                        if(pimpl->encodingPosition == (pimpl->utf8RepresnetationLen - 1))
+                        pimpl->encodingPosition += 6;
+                        if(pimpl->encodingPosition == pimpl->utf8RepresnetationLen )
                         {
                             output.push_back(pimpl->unicodeCodePointValue);
                             pimpl->unicodeCodePointValue = 0;
                             pimpl->encodingPosition = 0;
                         }
-                        else pimpl->encodingPosition++;
-                    } else {
+                    }else{
                         output.push_back(UNICODE_REPLACEMEMENT_CHARACTER);
                         pimpl->unicodeCodePointValue = 0;
                         pimpl->encodingPosition = 0;
